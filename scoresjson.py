@@ -1,6 +1,8 @@
 import json
 from pprint import pprint
 
+import requests
+
 with open("scores.json") as f:
     jsondata = json.load(f)
 
@@ -45,7 +47,7 @@ class PlayerPerformance:
             else:
                 return 4
 
-    def generate_report(self, team_name):
+    def generate_report(self, team_name,positions):
         rating = self.calculate_rating()
         if rating == 1:
             message = f"{self.name} faced challenges in the game."
@@ -58,9 +60,11 @@ class PlayerPerformance:
         else:
             message = f"{self.name} gave an outstanding performance."
 
-        return f"{team_name} {pos[self.position]} {message}" \
-               f" with {self.points} points, {self.rebounds} rebounds, "\
-               f"and {self.assists} assists."
+        return(
+            f"{team_name} {pos[self.position]} {message}"
+            f" with {self.points} points, {self.rebounds} rebounds, "
+            f"and {self.assists} assists."
+        )
 
 
 pos = {
@@ -70,7 +74,7 @@ pos = {
     "PF": "Power Forward",
     "C": "Center"
 }
-
+messages = []
 for game in jsondata["scoreboard"]["games"]:
     gameStatus = game["gameStatusText"]
     homeCity = game["homeTeam"]["teamCity"]
@@ -100,13 +104,26 @@ for game in jsondata["scoreboard"]["games"]:
         rebounds=awayLeaders["rebounds"],
         assists=awayLeaders["assists"])
 
-    home_output_string = homePlayerPerformance.generate_report(homeTeam)
-    away_output_string = awayPlayerPerformance.generate_report(awayTeam)
+    # home_output_string = homePlayerPerformance.generate_report(homeTeam,pos)
+    # away_output_string = awayPlayerPerformance.generate_report(awayTeam,pos)
 
-    print(gameStatus, "|", homeTeam, homeScore, " - ", awayScore, awayTeam)
-    print(home_output_string)
-    print(away_output_string)
+    # print(gameStatus, "|", homeTeam, homeScore, " - ", awayScore, awayTeam)
+    # print(home_output_string)
+    # print(away_output_string)
 
+    message = f"{gameStatus} | {homeTeam} {homeScore} - {awayScore} {awayTeam}"
+    messages.append(message)
+    
+    
+formatted_messages = "\n\n".join(messages)
+
+
+resp = requests.post('https://textbelt.com/text', {
+'phone': '8584428115',
+'message': formatted_messages,
+'key': 'my-key',
+})
+print(resp.json())
 # sample_homeLeaders = {
 #     "name": "Sample Player",
 #     "position": "C",  # Set the position to a valid value from your 'pos' dictionary

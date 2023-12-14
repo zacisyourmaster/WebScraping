@@ -1,3 +1,4 @@
+import datetime
 import requests
 import json
 
@@ -65,7 +66,9 @@ pos = {
     "PF": "Power Forward",
     "C": "Center",
 }
-
+messages = []
+current_date = datetime.now().strftime("%Y-%m-%d")
+messages.append(f"Hi Zach, here are game scores for {current_date}\n")
 for game in jsondata["scoreboard"]["games"]:
     gameStatus = game["gameStatusText"]
     homeCity = game["homeTeam"]["teamCity"]
@@ -98,7 +101,21 @@ for game in jsondata["scoreboard"]["games"]:
 
     home_output_string = homePlayerPerformance.generate_report(homeTeam, pos)
     away_output_string = awayPlayerPerformance.generate_report(awayTeam, pos)
+    game_string = f"{gameStatus} | {homeTeam} {homeScore} - {awayScore} {awayTeam}"
+    messages.extend([game_string, home_output_string, away_output_string, ""])
+    # print(gameStatus, "|", homeTeam, homeScore, " - ", awayScore, awayTeam)
+    # print(home_output_string)
+    # print(away_output_string)
 
-    print(gameStatus, "|", homeTeam, homeScore, " - ", awayScore, awayTeam)
-    print(home_output_string)
-    print(away_output_string)
+messages.pop()
+formatted_messages = "\n\n".join(messages)
+
+resp = requests.post(
+    "https://textbelt.com/text",
+    {
+        "phone": "8584428115",
+        "message": formatted_messages,
+        "key": "my-key",
+    },
+)
+print(resp.json())
