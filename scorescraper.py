@@ -1,3 +1,4 @@
+# Property of Zachary Smith 2023
 import datetime
 import requests
 import json
@@ -65,10 +66,14 @@ pos = {
     "SF": "Small Forward",
     "PF": "Power Forward",
     "C": "Center",
+    "G": "Guard",
+    "F": "Forward",
+    "G-F": "Wing",
+    "F-C": "Forward/Center",
+    "": "player",
 }
 messages = []
-current_date = datetime.now().strftime("%Y-%m-%d")
-messages.append(f"Hi Zach, here are game scores for {current_date}\n")
+messages.append(f"Hi Zach, here are game scores for \n")
 for game in jsondata["scoreboard"]["games"]:
     gameStatus = game["gameStatusText"]
     homeCity = game["homeTeam"]["teamCity"]
@@ -109,13 +114,13 @@ for game in jsondata["scoreboard"]["games"]:
 
 messages.pop()
 formatted_messages = "\n\n".join(messages)
-
-resp = requests.post(
-    "https://textbelt.com/text",
-    {
-        "phone": "8584428115",
-        "message": formatted_messages,
-        "key": "my-key",
-    },
-)
+for m in messages:
+    resp = requests.post(
+        "https://textbelt.com/text",
+        {
+            "phone": "8584428115",
+            "message": m,
+            "key": "my_key",
+        },
+    )
 print(resp.json())
