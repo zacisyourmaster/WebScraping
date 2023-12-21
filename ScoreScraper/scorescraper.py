@@ -61,15 +61,15 @@ class PlayerPerformance:
 
 
 pos = {
-    "PG": "Point Guard",
-    "SG": "Shooting Guard",
-    "SF": "Small Forward",
-    "PF": "Power Forward",
+    "PG": "Guard",
+    "SG": "Guard",
+    "SF": "Forward",
+    "PF": "Forward",
     "C": "Center",
     "G": "Guard",
     "F": "Forward",
     "G-F": "Wing",
-    "F-C": "Forward/Center",
+    "F-C": "Big Man",
     "": "player",
 }
 messages = []
@@ -120,7 +120,7 @@ for m in messages:
         {
             "phone": "8584428115",
             "message": m,
-            "key": "my_key",
+            "key": api_key,
         },
     )
 print(resp.json())
